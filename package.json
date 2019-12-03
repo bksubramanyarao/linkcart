@@ -1,0 +1,32 @@
+{
+  "name": "linkcart",
+  "version": "1.0.2",
+  "description": "Linkcart allows you to shortlist multiple tabs so you can copy all tabs urls( links ) at once.",
+  "main": "js/main.js",
+  "scripts": {
+    "watch": "webpack --config webpack.config.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bksubramanyarao/linkcart.git"
+  },
+  "keywords": [
+    "google",
+    "chrome",
+    "extension"
+  ],
+  "author": "Subramanya Rao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bksubramanyarao/linkcart/issues"
+  },
+  "homepage": "https://github.com/bksubramanyarao/linkcart#readme",
+  "devDependencies": {
+    "css-loader": "^3.2.1",
+    "mini-css-extract-plugin": "^0.8.0",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  }
+}
