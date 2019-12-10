@@ -1,6 +1,6 @@
 {
   "name": "linkcart",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Linkcart allows you to shortlist multiple tabs so you can copy all tabs urls( links ) at once.",
   "main": "js/main.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/bksubramanyarao/linkcart#readme",
   "devDependencies": {
-    "css-loader": "^3.2.1",
+    "css-loader": "^3.3.0",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
