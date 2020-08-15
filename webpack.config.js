@@ -2,7 +2,8 @@ var path = require('path');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-	mode: "production",
+	mode: "development",
+	// mode: "production",
 	entry: './js/index.js',
 
 	output: {

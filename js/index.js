@@ -1,6 +1,11 @@
 require('../scss/style.scss')
 
 
+const { removeElement, copyToClipboard, makeCsv } = require('./helper');
+
+
+
+
 /**
  ** DESCRIPTION: adds linkcart context menu on installing the extension
  */
@@ -52,19 +57,8 @@ window.onload = (e) => {
 	addLinks()
 	clearLinks()
 	deleteAccordion()
-}
-
-/**
- ** @param str String
- ** DESCRIPTION: copies to clipboard
- */
-function copyToClipboard(str) {
-	var el = document.createElement('textarea')
-	el.value = str
-	document.body.appendChild(el)
-	el.select()
-	document.execCommand('copy')
-	document.body.removeChild(el)
+	exportToCsv()
+	addToBookmark()
 }
 
 
@@ -86,7 +80,7 @@ function modifyDOM() {
  ** DESCRIPTION: copies all links in cart
  */
 function copyCartLink() {
-	var copylinks = document.querySelector('#copylinks')
+	var copylinks = document.querySelector('#copy-links')
 	var links = ``
 	if (copylinks) {
 		copylinks.addEventListener('click', (e) => {
@@ -106,17 +100,6 @@ function copyCartLink() {
 }
 
 /**
- ** @param id of element
- ** DESCRIPTION: delete html element by id
- */
-function removeElement(id) {
-	var elem = document.getElementById(id)
-	if (elem) {
-		return elem.parentNode.removeChild(elem)
-	}
-}
-
-/**
  ** DESCRIPTION: delete a single accordion
  */
 function deleteAccordion() {
@@ -127,6 +110,7 @@ function deleteAccordion() {
 				var accordion_id = e.target.parentNode.parentNode.parentNode.getAttribute('id')
 				removeElement(accordion_id)
 				saveLinks()
+				exportToCsv(false)
 			})
 		})
 	}
@@ -169,7 +153,7 @@ function getLinks() {
  ** DESCRIPTION: adds new link
  */
 function addLinks() {
-	var add_link = document.getElementById('addlink')
+	var add_link = document.getElementById('add-link')
 
 
 	if (add_link) {
@@ -203,6 +187,8 @@ function addLinks() {
 				deleteAccordion()
 
 				saveLinks()
+
+				exportToCsv(false)
 			})
 		})
 	}
@@ -212,7 +198,7 @@ function addLinks() {
  ** DESCRIPTION: clears all links in store
  */
 function clearLinks() {
-	var clear_link = document.querySelector('#clearlink')
+	var clear_link = document.querySelector('#clear-link')
 	if (clear_link) {
 		clear_link.addEventListener('click', (e) => {
 			chrome.storage.sync.set({ links: '' }, function () {
@@ -230,4 +216,87 @@ function saveLinks() {
 	chrome.storage.sync.set({ links: accs_data }, function () {
 	})
 }
+
+/**
+ ** DESCRIPTION: generates csv file with id, links, description
+ */
+function exportToCsv(fire = true) {
+	var export_to_csv_button_tag = document.querySelector('#export-to-csv')
+	var fire_click = fire
+	if (export_to_csv_button_tag) {
+		export_to_csv_button_tag.addEventListener('click', (event) => {
+			event.preventDefault()
+			chrome.storage.sync.get(null, function (result) {
+				var accordions = result.links
+				var doc = new DOMParser().parseFromString(accordions, "text/html")
+				var accordion = doc.querySelectorAll('body > div')
+				var link_descriptions = [...doc.querySelectorAll('body .d-flex .collapsible')]
+					.map((button) => (button.innerText.trim()))
+				var links = [...doc.querySelectorAll('body .content a')].map((a) => (a.href))
+				var csv = []
+
+				if (accordion.length > 0) {
+					for (var i = 0; i < accordion.length; i++) {
+						let id = i + 1
+						let urls = links[i]
+						let description = link_descriptions[i]
+						csv.push([id, urls, description])
+					}
+
+					var csv_output = makeCsv([
+						['id', 'links', 'dscriptions'],
+						...csv
+					])
+
+					document.querySelector('#csv-dump').setAttribute('href', csv_output)
+					if (fire_click) document.querySelector('#csv-dump').click()
+
+				}
+			})
+		})
+	}
+}
+
+/**
+ ** DESCRIPTION: bookmarks all links in cart
+ */
+function addToBookmark(fire = true) {
+	var add_to_bookmark_button_tag = document.querySelector('#add-to-bookmark')
+	var fire_click = fire
+	if (add_to_bookmark_button_tag) {
+		add_to_bookmark_button_tag.addEventListener('click', (event) => {
+			event.preventDefault()
+			var bookmark_folder_name = prompt('Please enter folder name for bookmarks', 'linkcart')
+			chrome.storage.sync.get(null, function (result) {
+				var accordions = result.links
+				var doc = new DOMParser().parseFromString(accordions, "text/html")
+				var accordion = doc.querySelectorAll('body > div')
+				var link_descriptions = [...doc.querySelectorAll('body .d-flex .collapsible')]
+					.map((button) => (button.innerText.trim()))
+				var links = [...doc.querySelectorAll('body .content a')].map((a) => (a.href))
+
+				if (accordion.length > 0) {
+					chrome.bookmarks.create({
+						title: bookmark_folder_name,
+						url: null
+					}, (bookmarkItem) => {
+						for (var i = 0; i < accordion.length; i++) {
+							let urls = links[i]
+							let description = link_descriptions[i]
+							chrome.bookmarks.create({
+								parentId: bookmarkItem.id,
+								title: description,
+								url: urls
+							})
+						}
+					})
+				}
+			})
+		})
+	}
+}
+
+
+
+
 
