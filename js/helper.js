@@ -31,5 +31,6 @@ export function copyToClipboard(str) {
  */
 export function makeCsv(arr) {
 	var csv = arr.map(function (v) { return v.join(',') }).join('\n')
-	return encodeURI("data:text/csv," + csv)
+	// return encodeURI("data:text/csv," + csv)
+	return csv
 }

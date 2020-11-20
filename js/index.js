@@ -58,6 +58,7 @@ window.onload = (e) => {
 	clearLinks()
 	deleteAccordion()
 	exportToCsv()
+	exportToTxt()
 	addToBookmark()
 }
 
@@ -189,6 +190,7 @@ function addLinks() {
 				saveLinks()
 
 				exportToCsv(false)
+					exportToTxt(false)
 			})
 		})
 	}
@@ -248,8 +250,46 @@ function exportToCsv(fire = true) {
 						...csv
 					])
 
-					document.querySelector('#csv-dump').setAttribute('href', csv_output)
-					if (fire_click) document.querySelector('#csv-dump').click()
+					const blob = new Blob([csv_output], { type: 'text/csv' });
+					const csv_dump = document.querySelector('#csv-dump')
+					csv_dump.setAttribute('download', 'short-list-links.csv')
+					csv_dump.setAttribute('href', window.URL.createObjectURL(blob))
+
+					if (fire_click) csv_dump.click()
+				}
+			})
+		})
+	}
+}
+
+/**
+ ** DESCRIPTION: generates txt file links
+ */
+function exportToTxt(fire = true) {
+	var export_to_txt_button_tag = document.querySelector('#export-to-txt')
+	var fire_click = fire
+	if (export_to_txt_button_tag) {
+		export_to_txt_button_tag.addEventListener('click', (event) => {
+			event.preventDefault()
+			chrome.storage.sync.get(null, function (result) {
+				var accordions = result.links
+				var doc = new DOMParser().parseFromString(accordions, "text/html")
+				var accordion = doc.querySelectorAll('body > div')
+				var links = [...doc.querySelectorAll('body .content a')].map((a) => (a.href))
+
+				var txt_output = ``
+				if (accordion.length > 0) {
+					for (var i = 0; i < accordion.length; i++) {
+						let urls = links[i]
+						txt_output += `${urls}\n\n`
+					}
+
+					const blob = new Blob([txt_output], { type: 'text/plain' });
+					const txt_dump = document.querySelector('#txt-dump')
+					txt_dump.setAttribute('download', 'short-list-links.txt')
+					txt_dump.setAttribute('href', window.URL.createObjectURL(blob))
+
+					if (fire_click) txt_dump.click()
 
 				}
 			})
