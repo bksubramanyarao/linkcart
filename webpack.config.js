@@ -1,32 +1,28 @@
-var path = require('path');
-var MiniCssExtractPlugin = require('mini-css-extract-plugin');
+var path = require("path");
+var MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
 	mode: "development",
 	// mode: "production",
-	entry: './js/index.js',
+	entry: "./js/index.js",
 
 	output: {
 		path: path.resolve(__dirname, "./bin/dist"),
-		filename: 'bundle.js'
+		filename: "bundle.js",
 	},
 
 	module: {
 		rules: [
 			{
 				test: /\.(sa|sc|c)ss$/,
-				use: [
-					MiniCssExtractPlugin.loader,
-					'css-loader',
-					'sass-loader',
-				]
-			}
-		]
+				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+			},
+		],
 	},
 
 	plugins: [
 		new MiniCssExtractPlugin({
 			filename: "[name].css",
-		})
-	]
+		}),
+	],
 };
