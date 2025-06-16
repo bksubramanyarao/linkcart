@@ -2,58 +2,6 @@ import { removeElement, copyToClipboard, makeCsv } from "../utils/storage.js";
 
 // Add popup logic here (event listeners, DOM manipulation, etc.)
 
-/**
- ** DESCRIPTION: adds linkcart context menu on installing the extension
- */
-chrome.runtime.onInstalled.addListener(() => {
-	chrome.contextMenus.create({
-		title: "add to linkcart",
-		id: "linkcart",
-		contexts: ["all"],
-	});
-	chrome.storage.sync.set({ links: "" }, function () {});
-});
-
-/**
- ** DESCRIPTION: context menu to add links
- */
-chrome.contextMenus.onClicked.addListener(async (itemData, tab) => {
-	if (itemData.menuItemId == "linkcart") {
-		try {
-			const injectionResults = await chrome.scripting.executeScript({
-				target: { tabId: tab.id },
-				func: modifyDOM,
-			});
-			if (injectionResults && injectionResults[0] && injectionResults[0].result) {
-				const result = injectionResults[0].result;
-				var coll = document.querySelectorAll(".collapsible").length + 1;
-				var acco = `
-					<div id="accordion-${coll}">
-						<div class="d-flex">
-							<button type="button" class="collapsible">
-								${result.title}
-							</button>
-							<span class="info-del"><a href="#" class="delete_acc">DELETE</a></span>
-						</div>
-						<div class="content">
-							<a href="${result.link}" class="d-none"></a>
-							<p>${result.description}</p>
-						</div>
-					</div>
-				`;
-				chrome.storage.sync.get(null, function (result) {
-					var links = result.links + acco;
-					chrome.storage.sync.set({ links }, function () {});
-				});
-			} else {
-				console.error("No result from content script");
-			}
-		} catch (err) {
-			console.error("Script injection failed:", err);
-		}
-	}
-});
-
 window.onload = (e) => {
 	copyCartLink();
 	getLinks();
