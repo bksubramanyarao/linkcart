@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>linkcart</title>
+		<link rel="stylesheet" href="popup.css" />
+	</head>
+	<body>
+		<header>
+			<section class="d-flex">
+				<button type="button" id="add-link" class="button1">ADD LINK</button>
+				<button type="button" id="copy-links" class="button1">COPY LINKS</button>
+				<button type="button" id="clear-link" class="button1">CLEAR ALL LINKS</button>
+			</section>
+			<section class="d-flex">
+				<a href="#" id="csv-dump" download="file.csv" class="d-none"></a>
+				<a href="#" id="txt-dump" download="file.txt" class="d-none"></a>
+				<button type="button" id="add-to-bookmark" class="button1">BOOKMARK LINKS</button>
+				<button type="button" id="export-to-csv" class="button1">EXPORT TO CSV</button>
+				<button type="button" id="export-to-txt" class="button1">EXPORT TO TXT</button>
+			</section>
+		</header>
+		<br />
+		<main></main>
+		<script type="module" src="popup.js"></script>
+	</body>
+</html>

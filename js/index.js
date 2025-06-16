@@ -1,4 +1,4 @@
-require("../scss/style.scss");
+// require("../scss/style.scss");
 
 const { removeElement, copyToClipboard, makeCsv } = require("./helper");
 
