@@ -72,18 +72,27 @@ function deleteAccordion() {
  ** DESCRIPTION: fixes accordion to new links
  */
 function accordion() {
-	var coll = document.querySelectorAll(".collapsible");
-	coll.forEach((el) => {
-		el.addEventListener("click", function (e) {
-			this.classList.toggle("active");
-			var content = this.parentNode.parentNode.querySelector(".content");
+	const main = document.querySelector("main");
+	if (!main) return;
+
+	// Remove any previous event listener to avoid stacking
+	main.removeEventListener("click", accordionClickHandler);
+	main.addEventListener("click", accordionClickHandler);
+}
+
+function accordionClickHandler(e) {
+	const target = e.target;
+	if (target.classList.contains("collapsible")) {
+		target.classList.toggle("active");
+		const content = target.parentNode.nextElementSibling;
+		if (content && content.classList.contains("content")) {
 			if (content.style.display === "block") {
 				content.style.display = "none";
 			} else {
 				content.style.display = "block";
 			}
-		});
-	});
+		}
+	}
 }
 
 /**
